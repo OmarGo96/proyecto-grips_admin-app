@@ -1,0 +1,117 @@
+
+<app-page-toolbar-title></app-page-toolbar-title>
+
+<ion-content fullscreen class="ion-padding">
+
+  <div class="title-container">
+    <p class="title">Ajustes Perfíl</p>
+  </div>
+  <br>
+  <ion-list>
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label>E-Mail - Login </ion-label>
+      </ion-item-divider> <!--credentials form buttons-->
+
+      <form [formGroup]="credentialsForm">
+        <div class=form-content [ngClass]="{'read-only': credentialsForm.disabled}">
+          <ion-row class="ion-no-padding ion-no-margin">
+
+            <ion-col size="12">
+              <mat-form-field appearance="legacy">
+                <mat-label>E-Mail*</mat-label>
+                <input type="email" matInput formControlName="email" class="padding-left" autocomplete="off" />
+                <mat-error *ngIf="credentialsF.email.errors?.required">Campo requerido</mat-error>
+                <mat-error *ngIf="credentialsF.email.errors?.minlength">El email debe tener al menos 6 caracteres</mat-error>
+                <mat-error *ngIf="credentialsF.email.errors?.maxlength">El email ebe tener al menos 80 caracteres</mat-error>
+                <mat-error *ngIf="credentialsF.email.errors?.pattern">Introduzca un correo electrónico válido</mat-error>
+              </mat-form-field>
+            </ion-col>
+          </ion-row>
+        </div>
+      </form> <!-- Credentials form-->
+
+      <ion-item-divider>
+        <ion-label>Cambiar contraseña</ion-label>
+        <ion-label slot="end">
+          <ion-button color="secondary" style="float: right;" size="small" (click)="changePassword()"
+                      *ngIf="changePass === false">EDITAR
+          </ion-button>
+          <ion-button color="secondary" style="float: right;" size="small" (click)="savePassword()"
+          *ngIf="changePass === true">GUARDAR
+          </ion-button>
+          <ion-button color="secondary" style="float: right;" size="small" (click)="cancelPassword()"
+                      *ngIf="changePass === true">CANCELAR
+          </ion-button>
+
+        </ion-label>
+      </ion-item-divider> <!-- cambiar contraseña form buttons-->
+
+      <form [formGroup]="changePwdForm">
+        <div class=form-content [ngClass]="{'read-only': changePwdForm.disabled}">
+          <ion-row class="ion-no-padding ion-no-margin">
+            <ion-col size="12">
+              <mat-form-field appearance="legacy">
+                <mat-label>Contraseña actual*</mat-label>
+                <input type="password" matInput formControlName="old_password" class="padding-left" autocomplete="off" />
+                <mat-error *ngIf="pwdF.old_password.errors?.required">Campo requerido</mat-error>
+              </mat-form-field>
+            </ion-col>
+            <ion-col size="12">
+              <mat-form-field appearance="legacy">
+                <mat-label>Nueva contraseña*</mat-label>
+                <input type="password" matInput formControlName="new_password" class="padding-left" autocomplete="off" />
+                <mat-error *ngIf="pwdF.new_password.errors?.required">Campo requerido</mat-error>
+              </mat-form-field>
+            </ion-col>
+            <ion-col size="12">
+              <mat-form-field appearance="legacy" *ngIf="changePass === true">
+                <mat-label>Confirmar Contraseña*</mat-label>
+                <input type="password" matInput [ngModelOptions]="{standalone: true}" [(ngModel)]="confirmPassword"
+                  class="padding-left" autocomplete="off" />
+                <div *ngIf="passMatch === false" class="custom-errors">Las contraseñas no coinciden</div>
+              </mat-form-field>
+            </ion-col>
+          </ion-row>
+        </div>
+      </form>
+
+      <ion-item-divider>
+        <ion-label>Datos Generales</ion-label>
+      </ion-item-divider>
+
+      <form [formGroup]="contactDataForm">
+        <div class=form-content [ngClass]="{'read-only': contactDataForm.disabled}">
+          <ion-row>
+            <ion-col size="12">
+              <mat-form-field appearance="legacy">
+                <mat-label>Nombre*</mat-label>
+                <input type="text" matInput formControlName="name" autocomplete="off" class="padding-left" />
+              </mat-form-field>
+            </ion-col>
+            <ion-col size="12">
+              <mat-form-field appearance="legacy">
+                <mat-label>Empresa</mat-label>
+                <input type="text" matInput formControlName="empresa" autocomplete="off" class="padding-left" />
+              </mat-form-field>
+            </ion-col>
+            <ion-col size="6">
+              <mat-form-field appearance="legacy">
+                <mat-label>Teléfono</mat-label>
+                <input type="tel" inputmode="numeric" matInput formControlName="telefono" class="padding-left" autocomplete="off" />
+              </mat-form-field>
+            </ion-col>
+            <ion-col size="6">
+              <mat-form-field appearance="legacy">
+                <mat-label>Email - Trabajo</mat-label>
+                <input type="email" matInput formControlName="emailTrabajo" autocomplete="off" class="padding-left" />
+              </mat-form-field>
+            </ion-col>
+          </ion-row>
+        </div>
+      </form>
+    </ion-item-group>
+
+  </ion-list> <!-- data settings-->
+
+</ion-content>

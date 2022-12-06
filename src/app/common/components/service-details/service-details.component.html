@@ -1,0 +1,625 @@
+<ion-header *ngIf="asModal" translucent>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()" class="close-btn">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" pullFactor="0.5" pullMin="100" pullMax="200" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-button *ngIf="data.status == 'paid'" color="success" (click)="viewTicketPayment()">
+    <ion-icon slot="icon-only" name="print"></ion-icon>
+  </ion-button>
+  <app-timecounter-bar *ngIf="data.model == 'cms_pre_solicitudes'" [dateToCompare]="dateHelper.transFormDate(data.date, 'localTimeMoment')"></app-timecounter-bar>
+  <mat-accordion id="datos-servicio" *ngIf="generalServ.canShowAccordeon('datos-servicio', data.model, data)">
+    <div class="accordion-margin">
+      <mat-expansion-panel  (opened)="setStep(0)" [expanded]="step === 0" hideToggle>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Datos del Servicio
+          </mat-panel-title>
+          <mat-panel-description style="margin: 0; justify-content: flex-end;">
+            <ion-icon src="assets/img/static/asistencia/icon-tools.svg"></ion-icon>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <ion-row class="horizonal-buttom-dotts">
+          <ion-col class="ion-no-margin" size="12">
+            <div style="display: flex;justify-content: space-between;align-items: center;">
+               <span>
+                <ion-chip class="ion-no-margin" color="success">{{selectStatusLabel()}}</ion-chip>
+              </span>
+              <span>
+                {{(dateHelper.transFormDate(data.complementData.fecha_hora_reservacion, 'localTime'))}}
+              </span>
+            </div>
+          </ion-col>
+          <ion-col size="6" style="border-right: 1px solid #e3e3e3; padding-right: 10px;">
+
+            <div style="display: flex;">
+              <div class="car-data">
+                <span class="model">{{data.car_details.brand}} {{data.car_details.model}}</span>
+                <span class="placas">{{data.car_details.plates}}</span>
+                <div class="color-anio">
+                  <span>{{data.car_details.color}}</span>
+                  <span>{{data.car_details.year}}</span>
+                </div>
+              </div>
+              <div class="vehiculo-img">
+                <ion-icon [src]="'assets/img/static/tipo-vehiculo/sedan.svg'"
+                          style="
+                            display: flex;
+                            flex: 1;
+                            font-size: 2rem;
+                          "></ion-icon>
+              </div>
+            </div>
+          </ion-col>
+          <ion-col size="6" style="padding-left: 10px; display: flex;">
+            <div class="avatar-img">
+              <ion-img src="assets/img/static/user-avatar.svg"></ion-img>
+              <p>{{data.user_data}}</p>
+            </div>
+          </ion-col>
+          <mat-divider></mat-divider>
+        </ion-row>
+
+        <ion-row>
+          <ion-col class="ion-no-margin" size="12">
+            <ion-chip
+              style="background: var(--app-blue-morado); color: white;">{{data.complementData.tiposervicio.name}}</ion-chip>
+          </ion-col>
+        </ion-row>
+
+        <div class="directions-container">
+          <ion-row>
+            <ion-col class="ion-align-self-center" size="2">
+              <ion-img class="pin-location" src="assets/img/static/pin-seencuentra.svg"></ion-img>
+            </ion-col>
+            <ion-col class="ion-align-self-center" size="10">
+              <span>{{data.service_details.from}}</span>
+            </ion-col>
+          </ion-row>
+
+          <ion-row>
+            <ion-col class="ion-align-self-center" size="2">
+              <ion-img class="pin-location" src="assets/img/static/pin-sedirige.svg"></ion-img>
+            </ion-col>
+            <ion-col class="ion-align-self-center" size="10">
+              <span>{{data.service_details.to}}</span>
+            </ion-col>
+          </ion-row>
+        </div>
+
+        <ion-row class="form-content">
+          <ion-col size="12">
+            <mat-form-field appearance="legacy">
+              <mat-label>Descripción del lugar donde se ubica</mat-label>
+              <textarea disabled matInput rows="4">{{data.complementData.solicitud.referencias}}</textarea>
+            </mat-form-field>
+          </ion-col>
+
+          <ion-col size="12">
+            <mat-form-field appearance="legacy">
+              <mat-label>Tipo de pago</mat-label>
+              <mat-select [(value)]="data.complementData.tipopago.id" disabled>
+                <mat-option [value]="data.complementData.tipopago.id">{{data.complementData.tipopago.name}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </ion-col>
+
+          <ion-col size="12" style="position: relative">
+            <mat-form-field appearance="legacy">
+              <mat-label>Teléfono para contacto</mat-label>
+              <input disabled matInput type="tel" value="{{data.complementData.solicitud.telefono +''}}">
+            </mat-form-field>
+            <div class="phone circle-shadow call">
+              <a href="{{'tel:+52' + data.complementData.solicitud.telefono}}">
+                <ion-img src="assets/img/static/phone-call.svg"
+                         style="width: 30px; height: 30px; background-color: #3F8BC6; border-radius: 50%; padding: 7px;">
+                </ion-img>
+              </a>
+            </div>
+          </ion-col>
+        </ion-row>
+        <mat-action-row>
+          <button (click)="nextStep()" mat-flat-button style="font-size: 1.5rem;">
+            <ion-icon name="chevron-forward-outline" style="color: var(--ion-color-medium);"></ion-icon>
+          </button>
+        </mat-action-row>
+      </mat-expansion-panel>
+    </div>
+  </mat-accordion> <!--Datos del Servicio expandido y enfocado en estatus: 1,2 -->
+  <mat-accordion *ngIf="generalServ.canShowAccordeon('preguntas', data.model, data)">
+    <div class="accordion-margin">
+      <mat-expansion-panel (opened)="setStep(1)" [expanded]="step === 1" hideToggle>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Preguntas exploración + Foto vehículo
+          </mat-panel-title>
+          <mat-panel-description style="margin: 0; justify-content: flex-end;">
+            <ion-icon src="assets/img/static/asistencia/icon-binoculars.svg"></ion-icon>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <ion-row>
+          <ion-col size="12" class="ion-no-margin ion-no-padding" *ngIf="photoVehiculoURL && loadingPhotoVehiculo === false">
+            <img [src]="photoVehiculoURL" alt="foto-vehiculo">
+          </ion-col>
+          <ion-col size="12" *ngIf="loadingPhotoVehiculo === true">
+            <ion-progress-bar></ion-progress-bar>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="form-content">
+
+          <ion-col size="12" style="padding-top: 0;">
+            <div *ngFor="let pregunta of data.complementData.preguntas" class="radio-buttons-container">
+              <mat-label>{{pregunta.pregunta_label}}</mat-label>
+              <mat-radio-group *ngIf="pregunta.pregunta_response; else opt2" disabled>
+                <mat-radio-button [checked]="true" [value]="true">SI</mat-radio-button>
+                <mat-radio-button [value]="false">NO</mat-radio-button>
+              </mat-radio-group>
+              <ng-template #opt2>
+                <mat-radio-group disabled>
+                  <mat-radio-button [value]="false">SI</mat-radio-button>
+                  <mat-radio-button [checked]="true" [value]="true">NO</mat-radio-button>
+                </mat-radio-group>
+              </ng-template>
+            </div>
+          </ion-col>
+        </ion-row>
+
+        <mat-action-row>
+          <button (click)="prevStep()" mat-flat-button style="font-size: 1.5rem;">
+            <ion-icon name="chevron-back-outline" style="color: var(--ion-color-medium);"></ion-icon>
+          </button>
+          &nbsp;
+          &nbsp;
+          <button (click)="nextStep()" mat-flat-button style="font-size: 1.5rem;">
+            <ion-icon name="chevron-forward-outline" style="color: var(--ion-color-medium);"></ion-icon>
+          </button>
+        </mat-action-row>
+      </mat-expansion-panel>
+    </div>
+  </mat-accordion> <!-- Preguntas exploración + Foto vehículo -->
+  <mat-accordion *ngIf="generalServ.canShowAccordeon('datos-vehiculo', data.model, data)">
+    <div class="accordion-margin">
+      <mat-expansion-panel (opened)="setStep(2)" [expanded]="step === 2" hideToggle>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Datos Vehículo
+          </mat-panel-title>
+          <mat-panel-description style="margin: 0; justify-content: flex-end;">
+            <ion-icon src="assets/img/static/asistencia/icon-car.svg"></ion-icon>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <ion-row>
+          <ion-col size="12">
+            <mat-form-field appearance="legacy">
+              <mat-label>Tipo de vehículo</mat-label>
+              <input type="text" disabled matInput value="{{data.complementData.vehiculo.tipo.name}}">
+            </mat-form-field>
+          </ion-col>
+          <ion-col size="12">
+            <mat-form-field appearance="legacy">
+              <mat-label>Marca de vehículo</mat-label>
+              <input type="text" matInput disabled value="{{data.complementData.vehiculo.marca.name}}">
+            </mat-form-field>
+          </ion-col>
+          <ion-col size="12">
+            <mat-form-field appearance="legacy">
+              <mat-label>Color del vehículo</mat-label>
+              <input type="text" matInput disabled value="{{data.complementData.vehiculo.color.name}}">
+            </mat-form-field>
+          </ion-col>
+          <ion-col size="12">
+            <mat-form-field appearance="legacy">
+              <mat-label>Clase</mat-label>
+              <input type="text" disabled matInput value="{{data.complementData.vehiculo.clase.name}}">
+            </mat-form-field>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="6">
+            <mat-form-field appearance="legacy">
+              <mat-label>Año</mat-label>
+              <input disabled matInput type="text" value="{{data.complementData.vehiculo.anio}}">
+            </mat-form-field>
+          </ion-col>
+          <ion-col size="6">
+            <mat-form-field appearance="legacy">
+              <mat-label>Placas</mat-label>
+              <input disabled matInput type="text" value="{{data.complementData.vehiculo.placas}}">
+            </mat-form-field>
+          </ion-col>
+        </ion-row>
+
+        <mat-action-row>
+          <button (click)="prevStep()" mat-flat-button style="font-size: 1.5rem;">
+            <ion-icon name="chevron-back-outline" style="color: var(--ion-color-medium);"></ion-icon>
+          </button>
+          &nbsp;
+          &nbsp;
+          <button (click)="nextStep()" mat-flat-button style="font-size: 1.5rem;">
+            <ion-icon name="chevron-forward-outline" style="color: var(--ion-color-medium);"></ion-icon>
+          </button>
+        </mat-action-row>
+      </mat-expansion-panel>
+    </div>
+  </mat-accordion> <!-- Datos Vehículo -->
+  <mat-accordion *ngIf="generalServ.canShowAccordeon('cobro', data.model, data)">
+    <div class="accordion-margin">
+      <mat-expansion-panel [expanded]="step === 3" (opened)="setStep(3)" hideToggle>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Detalle de cobro
+          </mat-panel-title>
+          <mat-panel-description style="margin: 0; justify-content: flex-end;">
+            <ion-icon src="assets/img/static/asistencia/icon-money.svg"></ion-icon>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <ion-row>
+          <ion-col size="6" class="on-no-padding ion-no-margin">
+            <p style="color: var(--app-secondary); font-weight: bold">Servicios</p>
+          </ion-col>
+          <ion-col size="6">
+            <div class="item-description" *ngIf="data.complementData.tipopago?.name">
+              <ion-chip style="background: var(--app-blue-morado);color: white;text-align: center;">{{data.complementData.tipopago.name}}</ion-chip>
+            </div>
+          </ion-col>
+        </ion-row>
+
+        <ng-container *ngIf="data.complementData.cotizacion && data.complementData.cotizacion.items.length > 0">
+          <ion-row>
+            <ion-col size="2" class="ion-no-padding ion-no-margin ion-align-self-center">
+              <span>Cant.</span>
+            </ion-col>
+            <ion-col size="6" class="ion-no-padding ion-no-margin">
+              <div class="item-large-description">
+                <span>Descripción</span>
+              </div>
+            </ion-col>
+            <ion-col size="4" class="ion-no-padding ion-no-margin ion-align-self-center ion-text-right">
+              <span>Costo</span>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngFor="let item of data.complementData.cotizacion.items">
+            <ion-col size="2" class="ion-no-padding ion-no-margin ion-align-self-center">
+              <span class="item-quantity">{{item.item_quantity}}</span>
+            </ion-col>
+            <ion-col size="6" class="ion-no-padding ion-no-margin">
+              <div class="item-large-description">
+                <span>{{item.item_description}}</span>
+              </div>
+            </ion-col>
+            <ion-col size="4" class="ion-no-padding ion-no-margin ion-align-self-center ion-text-right">
+              <span>{{item.item_price | currency}} MXN</span>
+            </ion-col>
+          </ion-row>
+        </ng-container>
+
+        <hr style="background: var(--ion-color-medium)">
+        <ion-row>
+          <ion-col size="12" class="ion-no-padding ion-no-margin">
+            <div class="balance">
+              <span>SubTotal</span>
+              <span>{{data.complementData.cotizacion.calculator.subtotal | currency}} MXN</span>
+            </div>
+            <div class="balance">
+              <span>Impuestos</span>
+              <span>{{data.complementData.cotizacion.calculator.tax_amount | currency}} MXN</span>
+            </div>
+            <div class="balance" style="margin-top: 10px;">
+              <span class="total">Total</span>
+              <span class="total">{{data.complementData.cotizacion.calculator.total | currency}} MXN</span>
+            </div>
+          </ion-col>
+        </ion-row>
+
+        <mat-action-row>
+          <button mat-flat-button style="font-size: 1.5rem;" (click)="prevStep()">
+            <ion-icon style="color: var(--ion-color-medium);" name="chevron-back-outline"></ion-icon>
+          </button>
+          &nbsp;
+          &nbsp;
+          <button mat-flat-button style="font-size: 1.5rem;" (click)="nextStep()">
+            <ion-icon style="color: var(--ion-color-medium);" name="chevron-forward-outline"></ion-icon>
+          </button>
+        </mat-action-row>
+      </mat-expansion-panel>
+    </div>
+  </mat-accordion> <!-- Detalle de cobro -->
+  <mat-accordion *ngIf="generalServ.canShowAccordeon('arribo', data.model, data)">
+    <div class="accordion-margin">
+      <mat-expansion-panel (opened)="setStep(4)" [expanded]="step === 4" hideToggle>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Detalle Arribo
+          </mat-panel-title>
+          <mat-panel-description style="margin: 0; justify-content: flex-end;">
+            <ion-icon src="assets/img/static/asistencia/icon-arribo.svg"></ion-icon>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <ion-row>
+          <ion-col size="6">
+            <mat-form-field appearance="legacy">
+              <mat-label>Placas</mat-label>
+              <input matInput type="text" [(ngModel)]="data.complementData.vehiculo.placas">
+            </mat-form-field>
+            <div class="arribo-buttons">
+              <ion-button size="small" style="color:white; --background: var(--ion-color-success)" (click)="updateValues()">
+                <ion-icon name="save"></ion-icon>
+              </ion-button>
+            </div>
+          </ion-col>
+          <ion-col size="6">
+            <mat-form-field appearance="legacy">
+              <mat-label>No. Serie</mat-label>
+              <input matInput type="text" [(ngModel)]="data.complementData.vehiculo.noserie">
+            </mat-form-field>
+            <div class="arribo-buttons">
+              <ion-button size="small" style="color:white; --background: var(--ion-color-success)" (click)="updateValues()">
+                <ion-icon name="save"></ion-icon>
+              </ion-button>
+            </div>
+          </ion-col>
+        </ion-row>
+        <hr style="background: var(--ion-color-medium)">
+
+        <ion-row>
+          <ion-col class="ion-no-margin ion-no-padding" size="12">
+            <h4>Fotos Siniestro</h4>
+          </ion-col>
+        </ion-row>
+
+        <mat-tab-group (selectedTabChange)="loadTabData($event)">
+<!--   DOC VEHICULO       -->
+          <mat-tab label="Doc. Vehículo">
+            <ion-row id="DocVehiculo">
+              <ion-col size="6">
+                <fieldset class="fieldset-photo">
+                  <app-camera [showPreviewImg]="false" [needConfirmation]="true" (base64Img)="capturedPhoto($event, 'DocVehiculo')"></app-camera>
+                </fieldset>
+              </ion-col>
+
+              <ion-col size="6" *ngFor="let doc of DocVehiculo; let i = index" [id]="'DocVehiculo_'+i">
+                <div style="position: relative; width: 92%;">
+                  <ion-img alt="demo-car" [src]="doc?.image" ></ion-img>
+                </div>
+                <div class="foto-more-btns">
+                  <button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu" mat-icon-button>
+                    <mat-icon style="color: var(--ion-color-medium)">more_vert</mat-icon>
+                  </button>
+                  <mat-menu #menu="matMenu">
+                    <button mat-menu-item (click)="deletePhoto(i, 'doctsveh', doc.id)">
+                      <mat-icon>delete</mat-icon>
+                      <span>Remover</span>
+                    </button>
+                  </mat-menu>
+                </div>
+              </ion-col>
+            </ion-row>
+
+          </mat-tab>
+<!--   DOC CLIENTE       -->
+          <mat-tab label="Doc. Cliente">
+            <ion-row id="DocCliente">
+              <ion-col size="6">
+                <fieldset class="fieldset-photo">
+                  <app-camera [showPreviewImg]="false" [needConfirmation]="true" (base64Img)="capturedPhoto($event, 'DocCliente')"></app-camera>
+                </fieldset>
+              </ion-col>
+
+              <ion-col size="6" *ngFor="let doc of DocCliente; let i = index" [id]="'DocCliente_'+i">
+                <div style="position: relative; width: 92%;">
+                  <ion-img alt="demo-car" [src]="doc?.image" ></ion-img>
+                </div>
+                <div class="foto-more-btns">
+                  <button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu" mat-icon-button>
+                    <mat-icon style="color: var(--ion-color-medium)">more_vert</mat-icon>
+                  </button>
+                  <mat-menu #menu="matMenu">
+                    <button mat-menu-item (click)="deletePhoto(i, 'doctscliente', doc.id)">
+                      <mat-icon>delete</mat-icon>
+                      <span>Remover</span>
+                    </button>
+                  </mat-menu>
+                </div>
+              </ion-col>
+            </ion-row>
+          </mat-tab>
+<!--   DOC FRENTE      -->
+          <mat-tab label="Lado Frente">
+            <ion-row id="ladoFrente">
+              <ion-col size="6">
+                <fieldset class="fieldset-photo">
+                  <app-camera [showPreviewImg]="false" [needConfirmation]="true" (base64Img)="capturedPhoto($event, 'ladoFrente')"></app-camera>
+                </fieldset>
+              </ion-col>
+
+              <ion-col size="6" *ngFor="let doc of ladoFrente; let i = index" [id]="'ladoFrente_'+i">
+                <div style="position: relative; width: 92%;">
+                  <ion-img alt="demo-car" [src]="doc?.image" ></ion-img>
+                </div>
+                <div class="foto-more-btns">
+                  <button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu" mat-icon-button>
+                    <mat-icon style="color: var(--ion-color-medium)">more_vert</mat-icon>
+                  </button>
+                  <mat-menu #menu="matMenu">
+                    <button mat-menu-item (click)="deletePhoto(i, 'front', doc.id)">
+                      <mat-icon>delete</mat-icon>
+                      <span>Remover</span>
+                    </button>
+                  </mat-menu>
+                </div>
+              </ion-col>
+            </ion-row>
+          </mat-tab>
+<!--    DOC TRASERO      -->
+          <mat-tab label="Lado Trasero">
+            <ion-row id="ladoTrasero">
+              <ion-col size="6">
+                <fieldset class="fieldset-photo">
+                  <app-camera [showPreviewImg]="false" [needConfirmation]="true" (base64Img)="capturedPhoto($event, 'ladoTrasero')"></app-camera>
+                </fieldset>
+              </ion-col>
+
+              <ion-col size="6" *ngFor="let doc of ladoTrasero; let i = index" [id]="'ladoTrasero'+i">
+                <div style="position: relative; width: 92%;">
+                  <ion-img alt="demo-car" [src]="doc?.image" ></ion-img>
+                </div>
+                <div class="foto-more-btns">
+                  <button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu" mat-icon-button>
+                    <mat-icon style="color: var(--ion-color-medium)">more_vert</mat-icon>
+                  </button>
+                  <mat-menu #menu="matMenu">
+                    <button mat-menu-item (click)="deletePhoto(i, 'rear', doc.id)">
+                      <mat-icon>delete</mat-icon>
+                      <span>Remover</span>
+                    </button>
+                  </mat-menu>
+                </div>
+              </ion-col>
+            </ion-row>
+          </mat-tab>
+<!--    DOC CHOFER      -->
+          <mat-tab label="Lado Chofer">
+            <ion-row id="ladoChofer">
+              <ion-col size="6">
+                <fieldset class="fieldset-photo">
+                  <app-camera [showPreviewImg]="false" [needConfirmation]="true" (base64Img)="capturedPhoto($event, 'ladoChofer')"></app-camera>
+                </fieldset>
+              </ion-col>
+
+              <ion-col size="6" *ngFor="let doc of ladoChofer; let i = index" [id]="'ladoChofer'+i">
+                <div style="position: relative; width: 92%;">
+                  <ion-img alt="demo-car" [src]="doc?.image" ></ion-img>
+                </div>
+                <div class="foto-more-btns">
+                  <button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu" mat-icon-button>
+                    <mat-icon style="color: var(--ion-color-medium)">more_vert</mat-icon>
+                  </button>
+                  <mat-menu #menu="matMenu">
+                    <button mat-menu-item (click)="deletePhoto(i, 'side_a', doc.id)">
+                      <mat-icon>delete</mat-icon>
+                      <span>Remover</span>
+                    </button>
+                  </mat-menu>
+                </div>
+              </ion-col>
+            </ion-row>
+          </mat-tab>
+<!--    DOC COPILOTO      -->
+          <mat-tab label="Lado Copiloto">
+            <ion-row id="ladoCopiloto">
+              <ion-col size="6">
+                <fieldset class="fieldset-photo">
+                  <app-camera [showPreviewImg]="false" [needConfirmation]="true" (base64Img)="capturedPhoto($event, 'ladoCopiloto')"></app-camera>
+                </fieldset>
+              </ion-col>
+
+              <ion-col size="6" *ngFor="let doc of ladoCopiloto; let i = index" [id]="'ladoCopiloto_'+i">
+                <div style="position: relative; width: 92%;">
+                  <ion-img alt="demo-car" [src]="doc?.image" ></ion-img>
+                </div>
+                <div class="foto-more-btns">
+                  <button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu" mat-icon-button>
+                    <mat-icon style="color: var(--ion-color-medium)">more_vert</mat-icon>
+                  </button>
+                  <mat-menu #menu="matMenu">
+                    <button mat-menu-item (click)="deletePhoto(i, 'side_b', doc.id)">
+                      <mat-icon>delete</mat-icon>
+                      <span>Remover</span>
+                    </button>
+                  </mat-menu>
+                </div>
+              </ion-col>
+            </ion-row>
+          </mat-tab>
+
+        </mat-tab-group>
+
+        <mat-action-row>
+
+
+          <button (click)="prevStep()" mat-flat-button style="font-size: 1.5rem;">
+            <ion-icon name="chevron-back-outline" style="color: var(--ion-color-medium);"></ion-icon>
+          </button>          &nbsp;
+          &nbsp;
+          &nbsp;
+          <button mat-flat-button style="font-size: 1.5rem;" (click)="nextStep()" *ngIf="data.customer_sign">
+            <ion-icon style="color: var(--ion-color-medium);" name="chevron-forward-outline"></ion-icon>
+          </button>
+          <button (click)="canCaptureSignature()" mat-raised-button class="button-signature" *ngIf="!data.customer_sign">
+            <mat-icon>gesture</mat-icon>
+            &nbsp;
+            Firmar
+            &nbsp;
+            <ion-icon name="chevron-forward-outline" style="color: var(--ion-color-light);"></ion-icon>
+          </button>
+
+        </mat-action-row>
+      </mat-expansion-panel>
+    </div>
+  </mat-accordion> <!-- Detalle Arribo expandido y enfocado en estatus: 3 -->
+  <mat-accordion *ngIf="generalServ.canShowAccordeon('firma', data.model, data) && canSign">
+    <div class="accordion-margin">
+      <mat-expansion-panel (opened)="setStep(5)" [expanded]="step === 5" hideToggle>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Aceptación y Firma
+          </mat-panel-title>
+          <mat-panel-description style="margin: 0; justify-content: flex-end;">
+            <ion-icon src="assets/img/static/asistencia/icon-signature.svg"></ion-icon>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <ion-row>
+          <ion-col size="12">
+            <p>Acepto que se efectué el trabajo Lorem ipsum dolor sit amet, consectetur adipiscing elit.....</p>
+          </ion-col>
+        </ion-row>
+        <hr style="background: var(--ion-color-secondary)">
+
+        <app-signature-capture (signatureEmit)="captureSignature($event)"
+                               [instanceType]="'plain'"
+                               [customer_sign]="data.customer_sign"
+        ></app-signature-capture>
+
+        <mat-action-row>
+          <ion-button (click)="finishWork()" class="ion-succes-btn" expand="block" style="width: 100%">Finalizar
+            Trabajo
+          </ion-button>
+        </mat-action-row>
+      </mat-expansion-panel>
+    </div>
+  </mat-accordion> <!-- Aceptación y Firma expandido y enfocado en estatus: 4 -->
+
+  <div class="last-accordion"></div>
+  <div style="position: fixed; bottom: 0; width: 100%;" *ngIf="asModal === true">
+    <ion-row class="ion-no-margin ion-no-padding">
+      <ion-col class="ion-no-padding ion-no-margin" >
+        <ion-button expand="full" color="light" style="width: 100%;" class="ion-no-margin ion-no-padding" (click)="dismiss()">
+          Cerrar Ventana
+        </ion-button>
+      </ion-col>
+      <ion-col class="ion-no-padding ion-no-margin" *ngIf="generalServ.canShowBtnAction('accept-service', 'cms_pre_solicitudes', data)">
+        <ion-button [disabled]="data.isInService" expand="full" style="width: 100%" class="ion-succes-btn ion-no-margin ion-no-padding" (click)="attendService()">
+          Atender Servicio
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </div>
+</ion-content>
+
+

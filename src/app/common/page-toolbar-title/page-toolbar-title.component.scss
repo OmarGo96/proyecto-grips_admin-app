@@ -1,0 +1,11 @@
+ion-toolbar {
+  --background: var(--app-secondary);
+}
+ion-title {
+  .subtitle {
+      color: white;
+      font-size: 12px;
+      font-weight: 400;
+    margin: 0;
+  }
+}

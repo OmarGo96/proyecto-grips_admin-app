@@ -1,0 +1,66 @@
+<div class="map-wrapper">
+  <div #map id="map">
+  </div>
+  <ion-grid>
+    <ion-row>
+      <mat-accordion *ngIf="isInTransit" style="position: fixed;bottom: 8px;max-width: 90%;width: 100%;left: 16px;" #mapAcordeon id="mapAcordeon" class="example-headers-align">
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <button style="padding-right: 11px" mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+                <img src="assets/map_pins/route-icon.svg">
+              </button>
+              <p>
+                <ion-text style="font-size: 10px; color: #3F8BC6;">Estatus</ion-text>
+                <br>
+                <ion-text style="font-size: 19px; color: #04487E;">{{getStatusIn()}}</ion-text>
+              </p>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <mat-divider></mat-divider>
+          <br>
+          <ion-row>
+            <ion-col size="9" style="display: flex">
+              <button style="padding-right: 11px" mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+                <img src="assets/map_pins/route-disable.svg">
+              </button>
+              <p>
+                <br>
+                <ion-text style="font-size: 19px; color: #04487E;">En ruta</ion-text>
+              </p>
+            </ion-col>
+
+            <ion-col size="3">
+              <button *ngIf="isInTransit" style="padding-right: 11px; float: right;" mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+                <img src="assets/map_pins/ok.svg">
+              </button>
+            </ion-col>
+
+
+          </ion-row>
+          <br>
+          <mat-divider></mat-divider>
+          <ion-row style="margin-top: 25px; cursor: pointer" (click)="setArrive()">
+            <ion-col size="9" style="display: flex">
+              <button style="padding-right: 11px" mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+                <mat-icon aria-hidden="false" aria-label="Example home icon">map</mat-icon>
+              </button>
+              <p>
+                <ion-text style="font-size: 19px; color: #04487E;">Marcar Arribo</ion-text>
+                <br>
+                <ion-text style="font-size: 19px; color: #04487E;">Iniciar Levantamiento</ion-text>
+              </p>
+            </ion-col>
+
+            <ion-col size="3">
+              <button *ngIf="isArrived" style="padding-right: 11px; float: right;" mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+                <img src="assets/map_pins/ok.svg">
+              </button>
+            </ion-col>
+          </ion-row>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </ion-row>
+  </ion-grid>
+</div>
+<div id="sidebar"></div>

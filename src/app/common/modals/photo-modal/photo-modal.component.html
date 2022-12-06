@@ -1,0 +1,51 @@
+<ion-header translucent>
+<ion-toolbar>
+  <ion-title>Fotografía Para Continuar</ion-title>
+  <ion-buttons slot="end">
+    <ion-button class="close-btn" (click)="close({ok: false});" style="color: white">
+      <ion-icon name="close-outline"></ion-icon>
+    </ion-button>
+  </ion-buttons>
+</ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen>
+
+  <ion-list>
+    <ion-item>
+      <ion-label no>
+        <h2>Fotografía</h2>
+        <p class="ion-text-wrap">Para continuar necesitas capturar una imagen del frente</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ion-row>
+    <ion-col>
+      <fieldset class="fieldset-photo">
+        <app-camera [needConfirmation]="true" (base64Img)="capturedPhoto($event, 'DocVehiculo')"></app-camera>
+      </fieldset>
+    </ion-col>
+  </ion-row>
+
+  <ion-row>
+    <ion-col size="6" *ngFor="let doc of DocVehiculo; let i = index" [id]="'DocVehiculo_'+i">
+      <div style="position: relative; width: 92%;">
+        <ion-img alt="demo-car" [src]="doc?.image" ></ion-img>
+      </div>
+      <div class="foto-more-btns">
+        <button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu" mat-icon-button>
+          <mat-icon style="color: var(--ion-color-medium)">more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="deletePhoto(i, 'doctsveh', doc.id)">
+            <mat-icon>delete</mat-icon>
+            <span>Remover</span>
+          </button>
+        </mat-menu>
+      </div>
+    </ion-col>
+  </ion-row>
+
+</ion-content>
+

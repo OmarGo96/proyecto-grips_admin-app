@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Econo Gruas OP</string>
+    <string name="title_activity_main">Econo Gruas OP</string>
+    <string name="package_name">econogruas.ope.app</string>
+    <string name="custom_url_scheme">econogruas.ope.app</string>
+</resources>

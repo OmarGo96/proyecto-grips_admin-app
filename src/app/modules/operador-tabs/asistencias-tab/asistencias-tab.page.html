@@ -1,0 +1,46 @@
+<app-page-toolbar-title [hideBackBtn]="true"></app-page-toolbar-title>
+
+<ion-content>
+  <ion-row class="ion-no-padding ion-justify-content-between">
+    <ion-col size="fill">
+      <div style="flex:auto" class="button-map">
+
+        <ion-button color="secondary" *ngIf="showMap" (click)="reloadMap()">
+          <ion-icon slot="icon-only" name="reload-circle"></ion-icon>
+        </ion-button>
+      </div>
+    </ion-col>
+    <ion-col size="fill">
+      <div style="flex:auto">
+        <ion-item lines="none" class="item-round">
+          <ion-label>En Servicio </ion-label>
+          <ion-toggle style="float: right;" [(ngModel)]="isInService" (ionChange)="saveInService(isInService)"></ion-toggle>
+        </ion-item>
+      </div>
+    </ion-col>
+
+  </ion-row>
+  <ion-row class="ion-no-padding" [ngClass]="{hide: showMap === false}">
+    <ion-col class="ion-padding" size="12">
+      <app-google-maps [loadMap]="createMapSubject.asObservable()" [reloadM]="reloadMapSubject.asObservable()" [traceRoute]="mapSubject.asObservable()" [resetMap]="resetMap.asObservable()" (openDetails)="serviceDetailListeners($event)"></app-google-maps>
+    </ion-col>
+  </ion-row>
+
+  <ng-container *ngIf="(geoServ.gpsAvailable$ | async) === false">
+    <div class="empty-container">
+      <mat-icon>gps_off</mat-icon>
+      <p>
+        El GPS esta deshabilitado
+      </p>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="(sessionServ.isOnService$ | async) === false">
+    <div class="empty-container">
+      <mat-icon>visibility_off</mat-icon>
+      <p>
+        Fuera de servicio
+      </p>
+    </div>
+  </ng-container>
+</ion-content>
